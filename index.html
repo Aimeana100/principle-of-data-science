@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSC6131 Model Exam</title>
+<meta name="description" content="100 Master's-level model questions with answers for DSC6131 Principles of Data Science — practice and examination modes.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="logo" aria-hidden="true">Σ</span><div><h1>DSC6131 Model Exam</h1><p>Principles of Data Science · MSc revision</p></div></div>
+  <button id="homeBtn" class="btn ghost" hidden>Home</button>
+</header>
+
+<main id="app">
+  <!-- SETUP -->
+  <section id="setup" class="screen">
+    <div id="resumeBox" class="card notice" hidden>
+      <div><strong>Unfinished session found.</strong> <span id="resumeInfo"></span></div>
+      <div class="row gap"><button id="resumeBtn" class="btn primary">Resume</button><button id="discardBtn" class="btn ghost">Discard</button></div>
+    </div>
+
+    <div class="card">
+      <h2>1 · Choose a mode</h2>
+      <div class="modes" role="radiogroup" aria-label="Mode">
+        <label class="mode"><input type="radio" name="mode" value="practice" checked><span><strong>Practice</strong><small>One question at a time, instant feedback, model answers and explanations.</small></span></label>
+        <label class="mode"><input type="radio" name="mode" value="exam"><span><strong>Examination</strong><small>Answers hidden until you submit. Marks, percentage and a detailed review at the end.</small></span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2 · Filter questions</h2>
+      <div class="filter"><h3>Question set</h3><div id="fSet" class="chips"></div></div>
+      <div class="filter"><h3>Topic area</h3><div id="fArea" class="chips"></div></div>
+      <div class="filter"><h3>Difficulty</h3><div id="fDiff" class="chips"></div></div>
+      <div class="filter"><h3>Question type</h3><div id="fType" class="chips"></div></div>
+      <div class="row gap wrap opts">
+        <label class="check"><input type="checkbox" id="optShuffleQ" checked> Random question order</label>
+        <label class="check"><input type="checkbox" id="optShuffleO" checked> Shuffle answer options</label>
+        <label class="check">Number of questions <input type="number" id="optCount" min="1" max="100" value="100"></label>
+      </div>
+      <p class="muted" id="matchInfo"></p>
+      <div class="row gap"><button id="startBtn" class="btn primary big">Start</button><button id="resetFilters" class="btn ghost">Reset filters</button></div>
+    </div>
+
+    <div class="card" id="historyCard" hidden>
+      <h2>Recent examination results</h2>
+      <div class="tablewrap"><table class="data" id="historyTable"></table></div>
+      <button id="clearHistory" class="btn ghost small">Clear history</button>
+    </div>
+
+    <details class="card">
+      <summary><strong>Marking scheme</strong></summary>
+      <ul class="muted">
+        <li>Foundational = 1 mark, Intermediate = 2 marks, Advanced = 3 marks (Set A = 125 marks, Set B = 83 marks).</li>
+        <li>Set A (Q1–60) mixes theory with calculations; Set B (Q61–100) is calculation-free and tests principles, technique choice, data cleaning and validation.</li>
+        <li>Multiple choice, true/false and numerical questions are auto-marked. Numerical answers accept a stated tolerance.</li>
+        <li>Multiple-select earns partial credit: (correct ticks − wrong ticks) ÷ number of correct options, never below zero.</li>
+        <li>Short-answer and written scenario questions are self-marked against the examiner's rubric: tick each point your answer covers.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="screen" hidden>
+    <div class="quizhead card">
+      <div class="row between wrap gap">
+        <div><span id="modeBadge" class="badge"></span> <span id="qCounter" class="muted"></span></div>
+        <div class="row gap"><span id="timer" class="muted" aria-live="off"></span><button id="paletteToggle" class="btn ghost small">Questions ▾</button></div>
+      </div>
+      <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+      <p id="progressText" class="muted small"></p>
+      <div id="palette" class="palette" hidden></div>
+    </div>
+
+    <article id="qCard" class="card qcard" aria-live="polite"></article>
+
+    <nav class="row between gap navbar">
+      <button id="prevBtn" class="btn">← Previous</button>
+      <div class="row gap center">
+        <button id="flagBtn" class="btn ghost" aria-pressed="false">⚑ Flag</button>
+        <button id="checkBtn" class="btn primary">Check answer</button>
+      </div>
+      <button id="nextBtn" class="btn">Next →</button>
+    </nav>
+    <div class="row center"><button id="finishBtn" class="btn danger">Finish &amp; see results</button></div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results" class="screen" hidden>
+    <div class="card scorecard">
+      <div class="score"><div id="scorePct" class="pct"></div><div id="scoreMarks" class="muted"></div></div>
+      <div id="scoreNote" class="muted small"></div>
+      <div class="row gap wrap"><button id="retryWrong" class="btn primary">Practise incorrect &amp; flagged</button><button id="newSession" class="btn">New session</button></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>By topic area</h3><div class="tablewrap"><table class="data" id="byArea"></table></div></div>
+      <div class="card"><h3>By difficulty</h3><div class="tablewrap"><table class="data" id="byDiff"></table></div></div>
+    </div>
+    <div class="card">
+      <div class="row between wrap gap"><h3>Detailed review</h3>
+        <div class="chips" id="reviewFilter">
+          <button class="chip on" data-f="all">All</button><button class="chip" data-f="wrong">Incorrect / partial</button><button class="chip" data-f="flagged">Flagged</button><button class="chip" data-f="pending">Needs self-marking</button>
+        </div>
+      </div>
+      <div id="reviewList"></div>
+    </div>
+  </section>
+</main>
+
+<div id="modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modalbox card"><h3 id="modalTitle"></h3><p id="modalText"></p><div class="row gap end"><button id="modalCancel" class="btn ghost">Cancel</button><button id="modalOk" class="btn primary">OK</button></div></div>
+</div>
+
+<footer class="foot muted small">Questions are based on the DSC6131 course materials (UR – ACE-DS) and the OpenStax <i>Principles of Data Science</i>. Datasets in the questions are illustrative. Progress is saved in this browser only.</footer>
+
+<script src="question_bank/questions_01_20.js"></script>
+<script src="question_bank/questions_21_40.js"></script>
+<script src="question_bank/questions_41_60.js"></script>
+<script src="question_bank/questions_61_80.js"></script>
+<script src="question_bank/questions_81_100.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
