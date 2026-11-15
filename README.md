@@ -78,4 +78,4 @@ To add questions, append objects to a bank file, or add a new file plus a `<scri
   - phone width (no horizontal overflow, no console errors)
 
 ## Sources
-Course decks D1–D4 (Dr. T. Rizinde, UR-ACE-DS) and *Principles of Data Science* (Ault et al., OpenStax, 2025). See `research/` for the inventory, document structure, course scope, extraction plan and the specific pages consulted. All datasets in questions are illustrative.
+Course decks D1–D4 (Dr. T. Rizinde, UR-ACE-DS) and *Principles of Data Science* (Ault et al., OpenStax, 2025). All datasets in questions are illustrative.
